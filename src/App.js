@@ -1,24 +1,44 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react'
 import './App.css';
+import { useDispatch, useSelector } from 'react-redux'
+import { getProductData } from './Redux/slice/productData'
+import NavBar from './components/Navbar/navbar';
+import Home from './pages/home.jsx';
+import Cart from './components/Cart/cart.jsx'
+import Routing from './Router/router'
+import Footer from './components/footer/footer';
+import {auth} from './firebase'
+
+
 
 function App() {
+const [userName, setUserName] = useState(' ')
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getProductData());
+  }, [])
+  useEffect(() => {
+   
+    auth.onAuthStateChanged(user=>{
+      if (user) {  
+        setUserName(user?.displayName);
+      }else{
+        setUserName('')
+      }
+      console.log(user)})
+  }, [])
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+    <div className="container">
+      <NavBar userName={userName} />
+      {Routing}
+      <Footer/>
     </div>
+
+
   );
 }
 
